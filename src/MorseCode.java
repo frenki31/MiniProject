@@ -11,11 +11,11 @@ public class MorseCode {
 	private static String output1 = "";
 	private static String input2 = "";
 	private static String output2 = "";
-    private static HashMap map;
+    private static HashMap map; //Dictionary with english letters and numbers with corresponding morse code
     private static BufferedReader bufferedReader;
 	private static int response = 0;
 	
-	public static <T> void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 		bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 	   	scanner = new Scanner(System.in);
 		Character[] english = {'a','b','c','d','e','f',
@@ -31,12 +31,13 @@ public class MorseCode {
 			              "...","-","..-","...-",".--","-..-",
 		     	          "-.--","--..",".----","..---","...--","....-",
 				          ".....","-....","--...","---..","----.","-----"," "}; //array of morse code
-		map = CreateMap(english, morse);
+		map = CreateMap(english, morse); //Dictionary created with arrays above
 		System.out.println("|------->Welcome to Morse Code Converter<-------|");
 		
 		do {
 			menu();
-			while(!scanner.hasNextInt()) {
+			while(!scanner.hasNextInt()) { //If the input is not a number this loop will go until
+				//the user inputs a number
 				System.err.println("ERROR! Type one of the numbers to choose an option.");
 				scanner.next();
 			}
@@ -69,15 +70,15 @@ public class MorseCode {
 			}
 		}while(response!=5);
 	}
-		
+	/**
+	 * Method displayQuestion is called every time after the user completes a cycle
+	 */
 	public static void displayQuestion() {
 		System.out.println("\nDo you want to try something else? (Y/N)");
 		String answer = scanner.next();
-		if (answer.equalsIgnoreCase("Y") || answer.equalsIgnoreCase("y") 
-				|| answer.equalsIgnoreCase("Yes") || answer.equalsIgnoreCase("yes")) {
+		if (answer.matches("[yY][eE][sS]|[yY]")) { //the user inputs YES/yes/YeS/yES etc.
 			System.out.println("|------->Welcome to Morse Code Converter<-------|");
-		}else if (answer.equalsIgnoreCase("N") || answer.equalsIgnoreCase("n") 
-		 || answer.equalsIgnoreCase("No") || answer.equalsIgnoreCase("no")) {
+		}else if (answer.matches("[nN]|[nN][oO]")) { //the user input NO/no/No/nO
 			System.out.println("Thank you for using the Morse Code Converter!");
 			System.exit(0);
 		}else {
@@ -85,11 +86,16 @@ public class MorseCode {
 			scanner.next();
 		}
 	}
+	/**
+	 * Generic method displayArray is used to print out arrays of different types
+	 * @param array - generic parameter T
+	 */
 	public static <T> void displayArray(T[] array) {
     	for(int i=0; i<array.length; i++)
-    		System.out.printf(((i+1) % 6 != 0) ? "%s " : "%s%n", array[i]);
+    		System.out.printf(((i+1) % 6 != 0) ? "%s " : "%s%n", array[i]); //if the index modulus 6 is 0
+    	//then it is asked to go to the next line
     }
-	    
+
 	public static void menu() {
     	System.out.println("| Choose one option from the menu below         |");
     	System.out.println("| 1) Convert from English to Morse Code         |");		
@@ -99,43 +105,59 @@ public class MorseCode {
 	   	System.out.println("| 5) Exit                                       |");
     	System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 	}
-	
+	/**
+	 * Generic method CreateMap gets values from two arrays and puts them as keys and values on a hash map
+	 * @param key
+	 * @param value
+	 * @return
+	 */
 	public static <T> HashMap CreateMap(T[] key, T[] value) {
     	HashMap<T, T> map = new HashMap<>();
     	for(int i=0; i< key.length; i++)
 	   		map.put(key[i], value[i]);
     	return map;
 	}
-	
-//	public static <T> HashMap DisplayDictionary(HashMap<T, T> map) {
-//		for(Map.Entry<T, T> element: map.entrySet())
-//			System.out.printf(" %s = %s ",element.getKey(),element.getValue());
-//		return map;
-//	}
-	    
+	/**
+	 * Generic method codeToEng compares the values entered from the user and those on the dictionary     
+	 * @param map
+	 * @throws IOException
+	 */
 	public static <T> void codeToEng(HashMap<T, T> map) throws IOException{
     	System.out.println("Enter the morse code but after every letter enter a space: ");
 	   	sentence = bufferedReader.readLine();
 	   	String[] morseLetters = sentence.split(" ");
 	   	for (int i=0; i< morseLetters.length; i++) { 
-	   		for (T element: map.keySet()) {
-	   			if (morseLetters[i].equals(map.get(element))) {
+	   		for (T element: map.keySet()) { //iterate through the key set of the map
+	   			if (morseLetters[i].equals(map.get(element))) { //if morse letter entered is the same as that in the map
 	   				output2 += element + " ";
 	   				input2 += morseLetters[i]+ " ";
 	   			}
 	    	}
 	   	}
 	    System.out.println(input2+"converted to english is: " + output2);
+	    output2 = "";
+	    input2 = "";
 	}
-	    
+	/**
+	 * Generic method engToCode compares the values entered from the user and keys on the dictionary
+	 * @param map
+	 * @throws IOException
+	 */
 	public static <T> void engToCode(HashMap<T, T> map) throws IOException {
     	System.out.println("Enter the word or sentence you want to convert into morse code: ");
     	sentence = bufferedReader.readLine();
 	   	sentence = sentence.toLowerCase();
-	   	for (int i=0; i< sentence.length(); i++) { 
-	   		output1 += map.get(sentence.charAt(i)) + " ";
-	   		input1 += sentence.charAt(i)+ " ";
+	   	for (int i=0; i< sentence.length(); i++) {
+	   		for (T element: map.keySet()) {
+	   			if(element.equals(sentence.charAt(i))) { //if the key in dictionary is the same as morse letter entered by the user
+	   				output1 += map.get(sentence.charAt(i)) + " ";
+	   		   		input1 += sentence.charAt(i)+ " ";
+	   			}
+	   		}	
+	   		
 	    }
 	   	System.out.println(input1+"converted to morse code is: " + output1);
+	   	output1 = "";
+	   	input1 = "";
 	}
 }
