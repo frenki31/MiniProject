@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class SpellingChecker {
 	static ArrayList<String> list = new ArrayList<>();
-	//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
+
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
 		readRecords(list);
@@ -14,24 +14,23 @@ public class SpellingChecker {
 			System.out.println("Type a word or sentence to check your spelling:");
 			String sentence = scanner.nextLine();
 			String [] words = sentence.split("\\s+");
-			for (String wordDict: list)
-				for(String word: words) {
+			for(String word: words) {
 				if(Character.isUpperCase(word.charAt(0))) {
 					System.out.println("Is "+word+" a specific term? (yes/no)");
 					String response = scanner.nextLine();
 					if (response.matches("[yY][eE][sS]|[yY]")) {
 						list.add(word.toLowerCase());
-					}
+ 					}
 				}
 				if (list.contains(word.toLowerCase())) {
 					System.out.println(word + " = spelled correctly");
 				}
 				else {
-					if (anagram(word, wordDict)) {
-						System.out.println("Did you mean "+wordDict+"? (yes/no)");
+					if (anagram(word, getWord(list))) {
+						System.out.println("Did you mean "+ getWord(list)+"? (yes/no)");
 						String response = scanner.nextLine();
 						if (response.matches("[yY][eE][sS]|[yY]")) {
-							System.out.println("The correct spelling of "+word+" is "+wordDict);
+							System.out.println("The correct spelling of "+word+" is "+ getWord(list));
 						}else {
 							System.out.println(word + " = spelled incorrectly");
 					}
@@ -42,7 +41,7 @@ public class SpellingChecker {
 	}
 	public static <T> void readRecords(ArrayList<T> dictionary) {
 		try {
-			Scanner scanner = new Scanner(new File("C:\\Users\\user\\Desktop\\dictionary.txt"));
+			Scanner scanner = new Scanner(new File("C:\\Users\\user\\IdeaProjects\\MiniProject\\dictionary.txt"));
 			while(scanner.hasNextLine()) {
 				String [] tokens = scanner.nextLine().toLowerCase().split("\\s+");
 				for(String token :tokens)
@@ -64,5 +63,11 @@ public class SpellingChecker {
 			if (string1.charAt(i) != string2.charAt(i)) 
 				return false;
 		return true;
+	}
+
+	public static <T> String getWord(ArrayList<T> dictionary){
+		for(int i=0; i<dictionary.size(); i++)
+			dictionary.get(i);
+		return null;
 	}
 }
