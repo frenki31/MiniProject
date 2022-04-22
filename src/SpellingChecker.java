@@ -1,7 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class SpellingChecker {
@@ -15,27 +15,30 @@ public class SpellingChecker {
 			String sentence = scanner.nextLine();
 			String [] words = sentence.split("\\s+");
 			for(String word: words) {
-				if(Character.isUpperCase(word.charAt(0))) {
-					System.out.println("Is "+word+" a specific term? (yes/no)");
-					String response = scanner.nextLine();
-					if (response.matches("[yY][eE][sS]|[yY]")) {
-						list.add(word.toLowerCase());
- 					}
-				}
-				if (list.contains(word.toLowerCase())) {
-					System.out.println(word + " = spelled correctly");
-				}
-				else {
-					if (anagram(word, getWord(list))) {
-						System.out.println("Did you mean "+ getWord(list)+"? (yes/no)");
+					if(Character.isUpperCase(word.charAt(0))) {
+						System.out.println("Is "+word+" a specific term? (yes/no)");
 						String response = scanner.nextLine();
 						if (response.matches("[yY][eE][sS]|[yY]")) {
-							System.out.println("The correct spelling of "+word+" is "+ getWord(list));
-						}else {
-							System.out.println(word + " = spelled incorrectly");
+							list.add(word.toLowerCase());
+						}
 					}
-				}
-				}
+					if (list.contains(word.toLowerCase())) {
+						System.out.println(word + " = spelled correctly");
+					}
+					else {
+						for (String element: list) {
+							if (areAnagram(word, element)) {
+								System.out.println("Did you mean " + element + " ?");
+								String response1 = scanner.nextLine();
+								if (response1.matches("[yY][eE][sS]|[yY]")) {
+									System.out.println("The correct spelling of " + word + " is " + element);
+									break;
+								} else if (response1.matches("[nN][oO]|[nN]")) {
+									System.out.println(word + " = spelled incorrectly");
+								}
+							}
+						}
+					}
 			}
 		}while(true);
 	}
@@ -51,23 +54,31 @@ public class SpellingChecker {
 			e.printStackTrace();
 		}
 	}
-	
-	public static boolean anagram(String string1,String string2) {
-		int length1 = string1.length();
-		int length2 = string2.length();
-		if (length1 != length2)
-			return false;
-		Arrays.sort(string1.toCharArray());
-		Arrays.sort(string2.toCharArray());
-		for(int i=0; i<length1; i++)
-			if (string1.charAt(i) != string2.charAt(i)) 
-				return false;
-		return true;
-	}
 
-	public static <T> String getWord(ArrayList<T> dictionary){
-		for(int i=0; i<dictionary.size(); i++)
-			dictionary.get(i);
-		return null;
+	public static boolean areAnagram(String str1, String str2){
+		HashMap<Character,Integer> map1 = new HashMap<>();
+		HashMap<Character,Integer> map2 = new HashMap<>();
+		if (str1.length()!=str2.length()){
+			return false;
+		}
+		char[] charArray1 = str1.toLowerCase().toCharArray();
+		char[] charArray2 = str2.toLowerCase().toCharArray();
+		for (int i=0; i<charArray1.length; i++){
+			if (map1.get(charArray1[i]) == null){
+				map1.put(charArray1[i],1);
+			}else{
+				Integer counter = map1.get(charArray1[i]);
+				map1.put(charArray1[i], ++counter);
+			}
+		}
+		for (int j=0; j<charArray2.length; j++){
+			if (map2.get(charArray2[j]) == null){
+				map2.put(charArray2[j],1);
+			}else{
+				Integer counter = map2.get(charArray2[j]);
+				map2.put(charArray2[j], ++counter);
+			}
+		}
+	return map1.equals(map2);
 	}
 }
